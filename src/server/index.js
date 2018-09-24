@@ -5,6 +5,7 @@ import { StaticRouter, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { matchRoutes } from 'react-router-config';
 import routes from '../routes';
+import proxy from 'express-http-proxy';
 import Home from '../pages/home';
 import Login from '../pages/login';
 import { getStore } from '../store';

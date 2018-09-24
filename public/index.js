@@ -28930,13 +28930,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getList = undefined;
 
-var _axios = __webpack_require__(105);
-
-var _axios2 = _interopRequireDefault(_axios);
-
 var _constants = __webpack_require__(39);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var changeList = function changeList(list) {
 	return {
@@ -28946,8 +28940,9 @@ var changeList = function changeList(list) {
 };
 
 var getList = exports.getList = function getList() {
-	return function (dispatch) {
-		return _axios2.default.get('http://47.95.113.63/ssr/api/news.json?secret=D37msjPeC3').then(function (res) {
+	// 这个地方的axios是在createStore的时候通过thunk注入进来的
+	return function (dispatch, getState, axios) {
+		return axios.get('/api/news.json?secret=D37msjPeC3').then(function (res) {
 			var list = res.data.data;
 			dispatch(changeList(list));
 		});
@@ -29910,6 +29905,14 @@ var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
 var _store = __webpack_require__(38);
 
+var _request = __webpack_require__(127);
+
+var _request2 = _interopRequireDefault(_request);
+
+var _request3 = __webpack_require__(128);
+
+var _request4 = _interopRequireDefault(_request3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var reducer = (0, _redux.combineReducers)({
@@ -29917,12 +29920,15 @@ var reducer = (0, _redux.combineReducers)({
 });
 
 var getStore = function getStore() {
-	return (0, _redux.createStore)(reducer, (0, _redux.applyMiddleware)(_reduxThunk2.default));
+	// 用withWxtraArgument来传参
+	return (0, _redux.createStore)(reducer, (0, _redux.applyMiddleware)(_reduxThunk2.default.withExtraArgument(_request4.default)));
 };
 
 var getClientStore = function getClientStore() {
+	// 脱水
 	var initState = window.context;
-	return (0, _redux.createStore)(reducer, initState, (0, _redux.applyMiddleware)(_reduxThunk2.default));
+	// 用withWxtraArgument来传参
+	return (0, _redux.createStore)(reducer, initState, (0, _redux.applyMiddleware)(_reduxThunk2.default.withExtraArgument(_request2.default)));
 };
 
 exports.getStore = getStore;
@@ -29954,6 +29960,48 @@ var thunk = createThunkMiddleware();
 thunk.withExtraArgument = createThunkMiddleware;
 
 /* harmony default export */ __webpack_exports__["default"] = (thunk);
+
+/***/ }),
+/* 127 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _axios = __webpack_require__(105);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _axios2.default.create({
+	baseURL: '/'
+});
+
+/***/ }),
+/* 128 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _axios = __webpack_require__(105);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _axios2.default.create({
+	baseURL: 'http://47.95.113.63/ssr/'
+});
 
 /***/ })
 /******/ ]);
