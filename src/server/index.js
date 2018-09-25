@@ -3,7 +3,7 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { matchRoutes } from 'react-router-config';
+import { matchRoutes, renderRoutes } from 'react-router-config';
 import routes from '../routes';
 import proxy from 'express-http-proxy';
 import Home from '../pages/home';
@@ -20,18 +20,18 @@ app.use('/api', proxy('http://47.95.113.63', {
   }));
 
 
-let getRoutes = () => {
-	return routes.map(item => {
-		return <Route {...item} />
-	});
-}
+// let getRoutes = () => {
+// 	return routes.map(item => {
+// 		return <Route {...item} />
+// 	});
+// }
 
 let render = (store, req, res) => {
 	let content = renderToString((
 		<Provider store={store}>
 			<StaticRouter context={{}} location={req.path}>
 				<div>
-					{getRoutes()}
+					{renderRoutes(routes)}
 				</div>
 			</StaticRouter>
 		</Provider>

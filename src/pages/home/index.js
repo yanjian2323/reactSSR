@@ -13,7 +13,6 @@ class Home extends Component {
 	render () {
 		return (
 			<div>
-				<Header />
 				<p>this is home page,name is {this.props.name}</p>
 				<button onClick={() => alert(1)}>click me</button>
 				{renderList(this.props.list)}

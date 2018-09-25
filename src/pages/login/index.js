@@ -5,7 +5,6 @@ import Header from '../../components/header';
 let Login = () => {
 	return (
 		<div className="login">
-			<Header />
 			Login
 		</div>
 	)
