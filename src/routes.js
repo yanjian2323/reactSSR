@@ -2,7 +2,7 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 import App from './App';
 import Home from './pages/home';
-import Login from './pages/login';
+import Translation from './pages/translation';
 
 // let routes = (
 // 	<div>
@@ -29,6 +29,7 @@ const routes = [{
 	key: 'root',
 	path: '/',
 	component: App,
+	loadData: App.loadData,
 	routes: [{
 		key: 'home',
 		path: "/",
@@ -36,10 +37,11 @@ const routes = [{
 		component: Home,
 		loadData: Home.loadData
 	}, {
-		key: 'login',
-		path: "/login",
+		key: 'translation',
+		path: "/translation",
 		exact: true,
-		component: Login
+		component: Translation,
+		loadData: Translation.loadData
 	}]
 }];
 export default routes;

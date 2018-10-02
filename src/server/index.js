@@ -7,7 +7,6 @@ import { matchRoutes, renderRoutes } from 'react-router-config';
 import routes from '../routes';
 import proxy from 'express-http-proxy';
 import Home from '../pages/home';
-import Login from '../pages/login';
 import { getStore } from '../store';
 
 let app = express();
@@ -52,7 +51,7 @@ let render = (store, req, res) => {
 };
 
 app.get('*', function (req, res) {
-	let store = getStore();
+	let store = getStore(req);
 	let branch = matchRoutes(routes, req.path);
 	let promises = branch.map(({route}) => {
 		if (route.loadData) {
