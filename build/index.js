@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 13);
+/******/ 	return __webpack_require__(__webpack_require__.s = 14);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,13 +73,13 @@ module.exports = require("react");
 /* 1 */
 /***/ (function(module, exports) {
 
-module.exports = require("react-redux");
+module.exports = require("react-router-dom");
 
 /***/ }),
 /* 2 */
 /***/ (function(module, exports) {
 
-module.exports = require("react-router-dom");
+module.exports = require("react-redux");
 
 /***/ }),
 /* 3 */
@@ -93,11 +93,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.actions = exports.reducer = undefined;
 
-var _reducer = __webpack_require__(18);
+var _reducer = __webpack_require__(19);
 
 var _reducer2 = _interopRequireDefault(_reducer);
 
-var _actions = __webpack_require__(19);
+var _actions = __webpack_require__(20);
 
 var actions = _interopRequireWildcard(_actions);
 
@@ -131,9 +131,9 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRouterDom = __webpack_require__(2);
+var _reactRouterDom = __webpack_require__(1);
 
-var _reactRedux = __webpack_require__(1);
+var _reactRedux = __webpack_require__(2);
 
 var _store = __webpack_require__(3);
 
@@ -254,7 +254,7 @@ var _header = __webpack_require__(5);
 
 var _header2 = _interopRequireDefault(_header);
 
-var _reactRedux = __webpack_require__(1);
+var _reactRedux = __webpack_require__(2);
 
 var _store = __webpack_require__(8);
 
@@ -350,11 +350,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.actions = exports.reducer = undefined;
 
-var _reducer = __webpack_require__(20);
+var _reducer = __webpack_require__(21);
 
 var _reducer2 = _interopRequireDefault(_reducer);
 
-var _actions = __webpack_require__(21);
+var _actions = __webpack_require__(22);
 
 var actions = _interopRequireWildcard(_actions);
 
@@ -389,11 +389,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.actions = exports.reducer = undefined;
 
-var _reducer = __webpack_require__(23);
+var _reducer = __webpack_require__(24);
 
 var _reducer2 = _interopRequireDefault(_reducer);
 
-var _actions = __webpack_require__(24);
+var _actions = __webpack_require__(25);
 
 var actions = _interopRequireWildcard(_actions);
 
@@ -406,12 +406,24 @@ exports.actions = actions;
 
 /***/ }),
 /* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var CHANGE_LIST = exports.CHANGE_LIST = 'translation/change_list';
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = require("axios");
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -425,13 +437,13 @@ exports.default = {
 };
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _express = __webpack_require__(14);
+var _express = __webpack_require__(15);
 
 var _express2 = _interopRequireDefault(_express);
 
@@ -439,15 +451,15 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _server = __webpack_require__(15);
+var _server = __webpack_require__(16);
 
-var _reactRouterDom = __webpack_require__(2);
+var _reactRouterDom = __webpack_require__(1);
 
-var _reactRedux = __webpack_require__(1);
+var _reactRedux = __webpack_require__(2);
 
 var _reactRouterConfig = __webpack_require__(4);
 
-var _routes = __webpack_require__(16);
+var _routes = __webpack_require__(17);
 
 var _routes2 = _interopRequireDefault(_routes);
 
@@ -479,12 +491,13 @@ app.use('/api', (0, _expressHttpProxy2.default)('http://47.95.113.63', {
 // }
 
 var render = function render(store, req, res) {
+	var context = {};
 	var content = (0, _server.renderToString)(_react2.default.createElement(
 		_reactRedux.Provider,
 		{ store: store },
 		_react2.default.createElement(
 			_reactRouterDom.StaticRouter,
-			{ context: {}, location: req.path },
+			{ context: context, location: req.path },
 			_react2.default.createElement(
 				'div',
 				null,
@@ -492,7 +505,14 @@ var render = function render(store, req, res) {
 			)
 		)
 	));
-	res.send('\n\t\t<!DOCTYPE html>\n\t\t<html>\n\t\t\t<head></head>\n\t\t\t<body>\n\t\t\t\t<div id="root">' + content + '</div>\n\t\t\t\t<script>\n\t\t\t\t\twindow.context = ' + JSON.stringify(store.getState()) + ';\n\t\t\t\t</script>\n\t\t\t\t<script src="/index.js"></script>\n\t\t\t</body>\n\t\t</html>\n\t');
+	var html = '\n\t\t<!DOCTYPE html>\n\t\t<html>\n\t\t\t<head></head>\n\t\t\t<body>\n\t\t\t\t<div id="root">' + content + '</div>\n\t\t\t\t<script>\n\t\t\t\t\twindow.context = ' + JSON.stringify(store.getState()) + ';\n\t\t\t\t</script>\n\t\t\t\t<script src="/index.js"></script>\n\t\t\t</body>\n\t\t</html>\n\t';
+	if (context.notFound) {
+		res.status(400);
+	} else if (context.action === 'REPLACE') {
+		res.redirect(302, context.url);
+		return;
+	}
+	res.send(html);
 };
 
 app.get('*', function (req, res) {
@@ -502,7 +522,9 @@ app.get('*', function (req, res) {
 		var route = _ref.route;
 
 		if (route.loadData) {
-			return route.loadData(store);
+			return new Promise(function (resolve, reject) {
+				route.loadData(store).then(resolve, resolve);
+			});
 		}
 		return Promise.resolve();
 	});
@@ -516,19 +538,19 @@ app.listen(8080, function () {
 });
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = require("express");
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = require("react-dom/server");
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -542,9 +564,9 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRouterDom = __webpack_require__(2);
+var _reactRouterDom = __webpack_require__(1);
 
-var _App = __webpack_require__(17);
+var _App = __webpack_require__(18);
 
 var _App2 = _interopRequireDefault(_App);
 
@@ -552,9 +574,13 @@ var _home = __webpack_require__(7);
 
 var _home2 = _interopRequireDefault(_home);
 
-var _translation = __webpack_require__(22);
+var _translation = __webpack_require__(23);
 
 var _translation2 = _interopRequireDefault(_translation);
+
+var _ = __webpack_require__(32);
+
+var _2 = _interopRequireDefault(_);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -596,12 +622,15 @@ var routes = [{
 		exact: true,
 		component: _translation2.default,
 		loadData: _translation2.default.loadData
+	}, {
+		key: 'notfound',
+		component: _2.default
 	}]
 }];
 exports.default = routes;
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -641,7 +670,7 @@ App.loadData = function (store) {
 exports.default = App;
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -676,7 +705,7 @@ exports.default = function () {
 };
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -725,7 +754,7 @@ var isLogin = exports.isLogin = function isLogin() {
 };
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -758,7 +787,7 @@ exports.default = function () {
 };
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -781,7 +810,7 @@ var changeList = function changeList(list) {
 var getList = exports.getList = function getList() {
 	// 这个地方的axios是在createStore的时候通过thunk注入进来的
 	return function (dispatch, getState, axios) {
-		return axios.get('/api/news.json').then(function (res) {
+		return axios.get('/api/news111.json').then(function (res) {
 			var list = res.data.data;
 			dispatch(changeList(list));
 		});
@@ -789,7 +818,7 @@ var getList = exports.getList = function getList() {
 };
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -805,7 +834,9 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRedux = __webpack_require__(1);
+var _reactRedux = __webpack_require__(2);
+
+var _reactRouterDom = __webpack_require__(1);
 
 var _store = __webpack_require__(10);
 
@@ -839,13 +870,15 @@ var Translation = function (_Component) {
 	_createClass(Translation, [{
 		key: 'render',
 		value: function render() {
-			var list = this.props.list;
+			var _props = this.props,
+			    list = _props.list,
+			    isLogin = _props.isLogin;
 
-			return _react2.default.createElement(
+			return isLogin ? _react2.default.createElement(
 				'div',
 				{ className: 'traslation' },
 				getList(list)
-			);
+			) : _react2.default.createElement(_reactRouterDom.Redirect, { to: '/' });
 		}
 	}, {
 		key: 'componentDidMount',
@@ -865,7 +898,8 @@ Translation.loadData = function (store) {
 
 var mapStateToProps = function mapStateToProps(state) {
 	return {
-		list: state.translation.list
+		list: state.translation.list,
+		isLogin: state.header.isLogin
 	};
 };
 
@@ -880,7 +914,7 @@ var mapDispathToProps = function mapDispathToProps(dispatch) {
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispathToProps)(Translation);
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -892,7 +926,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _constants = __webpack_require__(25);
+var _constants = __webpack_require__(11);
 
 var constants = _interopRequireWildcard(_constants);
 
@@ -915,7 +949,7 @@ exports.default = function () {
 };
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -926,7 +960,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getTranlationList = getTranlationList;
 
-var _constants = __webpack_require__(25);
+var _constants = __webpack_require__(11);
 
 var constants = _interopRequireWildcard(_constants);
 
@@ -950,18 +984,6 @@ function getTranlationList() {
 		});
 	};
 }
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var CHANGE_LIST = exports.CHANGE_LIST = 'translation/change_list';
 
 /***/ }),
 /* 26 */
@@ -1047,11 +1069,11 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _axios = __webpack_require__(11);
+var _axios = __webpack_require__(12);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _config = __webpack_require__(12);
+var _config = __webpack_require__(13);
 
 var _config2 = _interopRequireDefault(_config);
 
@@ -1075,11 +1097,11 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _axios = __webpack_require__(11);
+var _axios = __webpack_require__(12);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _config = __webpack_require__(12);
+var _config = __webpack_require__(13);
 
 var _config2 = _interopRequireDefault(_config);
 
@@ -1097,6 +1119,64 @@ exports.default = function (req) {
 		}
 	});
 };
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var NotFound = function (_Component) {
+	_inherits(NotFound, _Component);
+
+	function NotFound() {
+		_classCallCheck(this, NotFound);
+
+		return _possibleConstructorReturn(this, (NotFound.__proto__ || Object.getPrototypeOf(NotFound)).apply(this, arguments));
+	}
+
+	_createClass(NotFound, [{
+		key: "componentWillMount",
+		value: function componentWillMount() {
+			// 判断是否在服务端，客户端不执行这个代码
+			if (this.props.staticContext) {
+				this.props.staticContext.notFound = true;
+			}
+		}
+	}, {
+		key: "render",
+		value: function render() {
+			return _react2.default.createElement(
+				"div",
+				{ className: "not-found" },
+				"the page is not found"
+			);
+		}
+	}]);
+
+	return NotFound;
+}(_react.Component);
+
+exports.default = NotFound;
 
 /***/ })
 /******/ ]);

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
 import { actions } from './store';
 
@@ -11,11 +12,13 @@ function getList (list) {
 
 class Translation extends Component {
 	render () {
-		const { list } = this.props;
+		const { list, isLogin } = this.props;
 		return (
+			isLogin ? 
 			<div className="traslation">
 				{getList(list)}
-			</div>
+			</div> 
+			: <Redirect to="/" />
 		);
 	}
 	componentDidMount () {
@@ -30,7 +33,8 @@ Translation.loadData = (store) => {
 };
 
 const mapStateToProps = (state) => ({
-	list: state.translation.list
+	list: state.translation.list,
+	isLogin: state.header.isLogin
 });
 
 const mapDispathToProps = (dispatch) => ({

@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import App from './App';
 import Home from './pages/home';
 import Translation from './pages/translation';
+import NotFound from './pages/404';
 
 // let routes = (
 // 	<div>
@@ -42,6 +43,9 @@ const routes = [{
 		exact: true,
 		component: Translation,
 		loadData: Translation.loadData
+	}, {
+		key: 'notfound',
+		component: NotFound
 	}]
 }];
 export default routes;

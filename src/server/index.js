@@ -26,16 +26,17 @@ app.use('/api', proxy('http://47.95.113.63', {
 // }
 
 let render = (store, req, res) => {
+	let context = {};
 	let content = renderToString((
 		<Provider store={store}>
-			<StaticRouter context={{}} location={req.path}>
+			<StaticRouter context={context} location={req.path}>
 				<div>
 					{renderRoutes(routes)}
 				</div>
 			</StaticRouter>
 		</Provider>
 	));
-	res.send(`
+	const html = `
 		<!DOCTYPE html>
 		<html>
 			<head></head>
@@ -47,7 +48,14 @@ let render = (store, req, res) => {
 				<script src="/index.js"></script>
 			</body>
 		</html>
-	`);
+	`;
+	if (context.notFound) {
+		res.status(400);
+	} else if (context.action === 'REPLACE') {
+		res.redirect(302, context.url);
+		return;
+	}
+	res.send(html);
 };
 
 app.get('*', function (req, res) {
@@ -55,7 +63,9 @@ app.get('*', function (req, res) {
 	let branch = matchRoutes(routes, req.path);
 	let promises = branch.map(({route}) => {
 		if (route.loadData) {
-			return route.loadData(store);
+			return new Promise((resolve, reject) => {
+				route.loadData(store).then(resolve, resolve);
+			});
 		}
 		return Promise.resolve();
 	});
